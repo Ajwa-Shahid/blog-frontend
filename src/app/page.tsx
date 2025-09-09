@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useTheme } from '../Components/Constants/context/ThemeContext';
+import { useTheme } from 'next-themes';
 
 export default function Home() {
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const isDarkMode = theme === 'dark';
+  const toggleTheme = () => setTheme(isDarkMode ? 'light' : 'dark');
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-black' : 'bg-white'}`}>

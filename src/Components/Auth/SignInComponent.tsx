@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../Constants/context/AuthContext';
-import { useTheme } from '../Constants/context/ThemeContext';
+import { useTheme } from 'next-themes';
 import { LoginCredentials } from '../../types/auth';
 
 export default function SignInComponent() {
@@ -16,7 +16,9 @@ export default function SignInComponent() {
   const [message, setMessage] = useState({ type: '', text: '' });
   
   const { login, isLoading } = useAuth();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const isDarkMode = theme === 'dark';
+  const toggleTheme = () => setTheme(isDarkMode ? 'light' : 'dark');
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '../Constants/context/ThemeContext';
+import { useTheme } from 'next-themes';
 
 interface ThemeToggleProps {
   className?: string;
@@ -10,7 +10,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   className = '', 
   showText = false 
 }) => {
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const isDarkMode = theme === 'dark';
+  const toggleTheme = () => setTheme(isDarkMode ? 'light' : 'dark');
 
   return (
     <button
@@ -79,7 +81,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
 
 // Alternative compact toggle switch style
 export const CompactThemeToggle: React.FC<{ className?: string }> = ({ className = '' }) => {
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const isDarkMode = theme === 'dark';
+  const toggleTheme = () => setTheme(isDarkMode ? 'light' : 'dark');
 
   return (
     <button

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useTheme } from '../../Components/Constants/context/ThemeContext';
+import { useTheme } from 'next-themes';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -10,7 +10,8 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   
-  const { isDarkMode } = useTheme();
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

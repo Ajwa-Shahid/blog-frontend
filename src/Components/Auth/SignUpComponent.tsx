@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useTheme } from '../Constants/context/ThemeContext';
+import { useTheme } from 'next-themes';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -15,7 +15,9 @@ export default function SignUp() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [isLoading, setIsLoading] = useState(false);
   
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const isDarkMode = theme === 'dark';
+  const toggleTheme = () => setTheme(isDarkMode ? 'light' : 'dark');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
