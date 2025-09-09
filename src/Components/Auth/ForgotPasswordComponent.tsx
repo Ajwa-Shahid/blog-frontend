@@ -8,11 +8,7 @@ export default function ForgotPassword() {
   const [darkMode, setDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.documentElement.classList.toggle('dark');
-  };
+  // Removed automatic toggling. You can control darkMode state manually if needed.
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,16 +139,7 @@ export default function ForgotPassword() {
                 Sign in
               </Link>
             </p>
-            <Link 
-              href="/"
-              className={`inline-block px-6 py-2 rounded-lg font-medium border transition-colors ${
-                darkMode 
-                  ? 'border-gray-700 hover:bg-gray-800 text-white' 
-                  : 'border-gray-300 hover:bg-gray-50 text-black'
-              }`}
-            >
-              Back to Home
-            </Link>
+            
           </div>
         </form>
       </div>

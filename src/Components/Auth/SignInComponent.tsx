@@ -72,7 +72,7 @@ export default function SignInComponent() {
         {/* Header */}
         <div className="text-center">
           <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
-            Blog System
+            Bijli Coin
           </h1>
         </div>
 
@@ -84,7 +84,7 @@ export default function SignInComponent() {
         }`}>
           <div className="text-center mb-8">
             <h2 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              Welcome Back
+              Sign In
             </h2>
             <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               Sign in to your blogging space
