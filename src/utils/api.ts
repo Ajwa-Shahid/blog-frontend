@@ -92,12 +92,9 @@ class ApiClient {
   private baseURL: string;
   private csrfToken: string | null = null;
 
-  constructor(baseURL: string = 'http://localhost:8000/api') {
-    this.baseURL = baseURL;
-    // Initialize CSRF in background without blocking the app
-    this.initializeCSRF().catch(() => {
-      // Silently handle CSRF initialization failure
-    });
+  constructor(baseURL?: string) {
+    this.baseURL = baseURL || '';
+    // No backend, so skip CSRF initialization
   }
 
   private async initializeCSRF() {

@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
-  // Removed automatic toggling. You can control darkMode state manually if needed.
+  const { theme } = useTheme();
+  const darkMode = theme === 'dark';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,9 +52,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
-      darkMode ? 'bg-gray-900' : 'bg-gray-50'
-    }`}>
+  <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className={`max-w-md w-full mx-4 p-8 rounded-lg border transition-colors ${
         darkMode 
           ? 'bg-gray-900 border-gray-800 shadow-lg shadow-gray-900/20' 
