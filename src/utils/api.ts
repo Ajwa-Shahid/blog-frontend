@@ -94,7 +94,10 @@ class ApiClient {
 
   constructor(baseURL: string = 'http://localhost:8000/api') {
     this.baseURL = baseURL;
-    this.initializeCSRF();
+    // Initialize CSRF in background without blocking the app
+    this.initializeCSRF().catch(() => {
+      // Silently handle CSRF initialization failure
+    });
   }
 
   private async initializeCSRF() {
@@ -103,10 +106,16 @@ class ApiClient {
         method: 'GET',
         credentials: 'include',
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       this.csrfToken = data.token;
     } catch (error) {
-      console.warn('Failed to fetch CSRF token:', error);
+      // Only log as warning, don't throw to avoid blocking the app
+      console.warn('Failed to fetch CSRF token (backend may not be running):', error instanceof Error ? error.message : 'Unknown error');
     }
   }
 

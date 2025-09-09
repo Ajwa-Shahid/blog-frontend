@@ -1,0 +1,2 @@
+# This directory exists to prevent Next.js Turbopack scanning errors
+# We use App Router (src/app) instead of Pages Router (src/pages)
