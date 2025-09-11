@@ -52,25 +52,21 @@ export default function ForgotPassword() {
   };
 
   return (
-  <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className={`max-w-md w-full mx-4 p-8 rounded-lg border transition-colors ${
-        darkMode 
-          ? 'bg-gray-900 border-gray-800 shadow-lg shadow-gray-900/20' 
-          : 'bg-white border-gray-200 shadow-2xl shadow-gray-700/40 drop-shadow-xl'
-      }`}>
+  <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="max-w-md w-full mx-4 p-8 rounded-lg bg-slate-800 border border-slate-700 shadow-2xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-black'}`}>
+          <h2 className="text-3xl font-bold text-white">
             Bijli Coin
           </h2>
         </div>
 
         {/* Forgot Password Form */}
-        <div>
-          <h2 className={`text-2xl font-bold text-center ${darkMode ? 'text-white' : 'text-black'}`}>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-center text-white">
             Forgot Password
           </h2>
-          <p className={`mt-1 text-center ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className="mt-2 text-center text-gray-300">
             Enter your email to reset your password
           </p>
         </div>
@@ -80,22 +76,16 @@ export default function ForgotPassword() {
           {message.text && (
             <div className={`p-3 rounded-md text-sm ${
               message.type === 'success' 
-                ? darkMode 
-                  ? 'bg-green-900 text-green-100 border border-green-700' 
-                  : 'bg-green-50 text-green-800 border border-green-200'
-                : darkMode 
-                  ? 'bg-red-900 text-red-100 border border-red-700' 
-                  : 'bg-red-50 text-red-800 border border-red-200'
+                ? 'bg-green-900 text-green-100 border border-green-700'
+                : 'bg-red-900 text-red-100 border border-red-700'
             }`}>
               {message.text}
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div>
-              <label htmlFor="email" className={`block text-sm font-medium ${
-                darkMode ? 'text-white' : 'text-black'
-              }`}>
+              <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                 Email Address
               </label>
               <input
@@ -105,11 +95,7 @@ export default function ForgotPassword() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`mt-1 appearance-none relative block w-full px-3 py-2 border rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-colors ${
-                  darkMode 
-                    ? 'bg-gray-800 border-gray-700 text-white focus:ring-white' 
-                    : 'bg-white border-gray-300 text-black'
-                }`}
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border bg-slate-700 border-slate-600 text-white rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                 placeholder="Enter your email address"
               />
             </div>
@@ -119,22 +105,16 @@ export default function ForgotPassword() {
             <button
               type="submit"
               disabled={isLoading}
-              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                darkMode 
-                  ? 'bg-white text-black hover:bg-gray-200 focus:ring-white disabled:hover:bg-white' 
-                  : 'bg-black text-white hover:bg-gray-800 focus:ring-black disabled:hover:bg-black'
-              }`}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-white text-black hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
             >
               {isLoading ? 'Sending Reset Link...' : 'Send Reset Link'}
             </button>
           </div>
 
           <div className="text-center space-y-3">
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className="text-sm text-gray-400">
               Remember your password?{' '}
-              <Link href="/signin" className={`font-medium hover:underline ${
-                darkMode ? 'text-white' : 'text-black'
-              }`}>
+              <Link href="/signin" className="font-medium text-white hover:underline">
                 Sign in
               </Link>
             </p>
@@ -142,6 +122,6 @@ export default function ForgotPassword() {
           </div>
         </form>
       </div>
-    </div>
-  );
+    </div>
+  );
 }
