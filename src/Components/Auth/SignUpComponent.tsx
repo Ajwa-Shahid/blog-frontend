@@ -4,6 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import { useDispatch } from 'react-redux';
+import { useRegisterMutation } from '../../redux/api/authApi';
+import { setCredentials } from '../../redux/slices/authSlice';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -13,7 +16,8 @@ export default function SignUp() {
     confirmPassword: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [register, { isLoading }] = useRegisterMutation();
+  const dispatch = useDispatch();
   
   const router = useRouter();
   const { theme } = useTheme();
@@ -72,17 +76,34 @@ export default function SignUp() {
       return;
     }
 
-    setIsLoading(true);
-    
     try {
-      // Mock registration - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      router.push('/signin');
+      // Call the register API endpoint to save user to PostgreSQL database
+      const result = await register({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      }).unwrap();
+
+      // Store credentials in Redux and cookies
+      dispatch(setCredentials({
+        user: result.user,
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
+      }));
+
+      // Redirect to dashboard on successful registration
+      router.push('/dashboard');
     } catch (err: any) {
       console.error('Registration failed:', err);
-      setErrors({ general: 'Registration failed. Please try again.' });
-    } finally {
-      setIsLoading(false);
+      
+      // Handle server errors
+      if (err.data?.errors) {
+        setErrors(err.data.errors);
+      } else if (err.data?.message) {
+        setErrors({ general: err.data.message });
+      } else {
+        setErrors({ general: 'Registration failed. Please try again.' });
+      }
     }
   };
 
