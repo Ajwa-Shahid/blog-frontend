@@ -195,12 +195,20 @@ class ApiClient {
   }
 
   private async initializeCSRF() {
+    // Only initialize CSRF if explicitly enabled in environment
+    if (process.env.NEXT_PUBLIC_ENABLE_CSRF !== 'true') {
+      return;
+    }
+
     try {
       const response = await this.axiosInstance.get('/csrf-token');
       this.csrfToken = response.data.token;
+      console.log('🔒 CSRF token initialized successfully');
     } catch (error) {
-      // Only log as warning, don't throw to avoid blocking the app
-      console.warn('Failed to fetch CSRF token (backend may not be running):', error instanceof Error ? error.message : 'Unknown error');
+      // Silently handle CSRF initialization failure (backend may not support it)
+      if (process.env.NEXT_PUBLIC_NODE_ENV === 'development') {
+        console.warn('⚠️ CSRF not available (backend may not support it)');
+      }
     }
   }
 

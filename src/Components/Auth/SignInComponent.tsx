@@ -4,6 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import { useSelector } from 'react-redux';
+import { authService } from '../../services/authService';
+import { selectAuthLoading, selectAuthError } from '../../redux/slices/authSlice';
 
 export default function SignInComponent() {
   const [formData, setFormData] = useState({
@@ -12,7 +15,9 @@ export default function SignInComponent() {
     rememberMe: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
+  
+  const isLoading = useSelector(selectAuthLoading);
+  const authError = useSelector(selectAuthError);
   const router = useRouter();
   
   const { theme } = useTheme();
@@ -57,15 +62,15 @@ export default function SignInComponent() {
       return;
     }
 
-    setIsLoading(true);
     try {
-      // Mock login - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await authService.login({
+        email: formData.email,
+        password: formData.password,
+      });
+      
       router.push('/dashboard');
     } catch (err: any) {
-      setErrors({ general: 'Login failed. Please check your credentials and try again.' });
-    } finally {
-      setIsLoading(false);
+      setErrors({ submit: err.message || 'Login failed. Please check your credentials and try again.' });
     }
   };
 
@@ -93,11 +98,11 @@ export default function SignInComponent() {
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {errors.general && (
+            {(errors.general || errors.submit || authError) && (
               <div className={`p-4 rounded-lg border transition-all duration-300 ${
                 isDarkMode ? 'bg-red-900/30 text-red-100 border-red-700' : 'bg-red-50 text-red-800 border-red-200'
               }`}>
-                <p className="text-sm font-medium">{errors.general}</p>
+                <p className="text-sm font-medium">{errors.general || errors.submit || authError}</p>
               </div>
             )}
 

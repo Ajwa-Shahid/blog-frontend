@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
-import { useForgotPasswordMutation } from '../../redux/api/authApi';
+import { authService } from '../../services/authService';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+  const [isLoading, setIsLoading] = useState(false);
   const { theme } = useTheme();
   const darkMode = theme === 'dark';
 
@@ -28,7 +28,8 @@ export default function ForgotPassword() {
     }
 
     try {
-      const result = await forgotPassword({ email }).unwrap();
+      setIsLoading(true);
+      const result = await authService.forgotPassword({ email });
       
       setMessage({ 
         type: 'success', 
@@ -41,8 +42,10 @@ export default function ForgotPassword() {
       }, 3000);
       
     } catch (error: any) {
-      const errorMessage = error?.data?.message || 'Something went wrong. Please try again.';
+      const errorMessage = error.message || 'Something went wrong. Please try again.';
       setMessage({ type: 'error', text: errorMessage });
+    } finally {
+      setIsLoading(false);
     }
   };
 

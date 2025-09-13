@@ -4,9 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { useDispatch } from 'react-redux';
-import { useRegisterMutation } from '../../redux/api/authApi';
-import { setCredentials } from '../../redux/slices/authSlice';
+import { useSelector } from 'react-redux';
+import { authService } from '../../services/authService';
+import { selectAuthLoading, selectAuthError } from '../../redux/slices/authSlice';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -15,8 +15,9 @@ export default function SignUp() {
     password: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [register, { isLoading }] = useRegisterMutation();
-  const dispatch = useDispatch();
+  
+  const isLoading = useSelector(selectAuthLoading);
+  const authError = useSelector(selectAuthError);
   
   const router = useRouter();
   const { theme } = useTheme();
@@ -69,32 +70,19 @@ export default function SignUp() {
 
     try {
       // Call the register API endpoint to save user to PostgreSQL database
-      const result = await register({
+      await authService.register({
         username: formData.username,
         email: formData.email,
         password: formData.password,
-      }).unwrap();
-
-      // Store credentials in Redux and cookies
-      dispatch(setCredentials({
-        user: result.data.user,
-        accessToken: result.data.accessToken,
-        refreshToken: result.data.refreshToken,
-      }));
+      });
 
       // Redirect to dashboard on successful registration
       router.push('/dashboard');
     } catch (err: any) {
       console.error('Registration failed:', err);
       
-      // Handle server errors
-      if (err.data?.errors) {
-        setErrors(err.data.errors);
-      } else if (err.data?.message) {
-        setErrors({ general: err.data.message });
-      } else {
-        setErrors({ general: 'Registration failed. Please try again.' });
-      }
+      // Set form error if not handled by auth service
+      setErrors({ submit: err.message || 'Registration failed. Please try again.' });
     }
   };
 
@@ -120,9 +108,9 @@ export default function SignUp() {
           </div>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            {errors.general && (
+            {(errors.general || errors.submit || authError) && (
               <div className="bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-100 p-3 rounded-md text-sm">
-                {errors.general}
+                {errors.general || errors.submit || authError}
               </div>
             )}
 
