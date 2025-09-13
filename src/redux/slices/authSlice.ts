@@ -26,6 +26,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  successMessage: string | null;
 }
 
 // Initialize state from cookies if available
@@ -44,6 +45,7 @@ const getInitialState = (): AuthState => {
           isAuthenticated: true,
           isLoading: false,
           error: null,
+          successMessage: null,
         };
       } catch (error) {
         // If parsing fails, clear invalid data
@@ -61,6 +63,7 @@ const getInitialState = (): AuthState => {
     isAuthenticated: false,
     isLoading: false,
     error: null,
+    successMessage: null,
   };
 };
 
@@ -71,6 +74,11 @@ const authSlice = createSlice({
     loginStart: (state) => {
       state.isLoading = true;
       state.error = null;
+      state.successMessage = null;
+    },
+
+    clearLoading: (state) => {
+      state.isLoading = false;
     },
     
     setCredentials: (state, action: PayloadAction<{
@@ -86,6 +94,7 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.isLoading = false;
       state.error = null;
+      state.successMessage = null;
 
       // Store in cookies
       if (typeof window !== 'undefined') {
@@ -102,6 +111,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.isLoading = false;
       state.error = null;
+      state.successMessage = null;
 
       // Clear cookies
       if (typeof window !== 'undefined') {
@@ -114,10 +124,20 @@ const authSlice = createSlice({
     setAuthError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.isLoading = false;
+      state.successMessage = null;
     },
 
     clearAuthError: (state) => {
       state.error = null;
+    },
+
+    setSuccessMessage: (state, action: PayloadAction<string>) => {
+      state.successMessage = action.payload;
+      state.error = null;
+    },
+
+    clearSuccessMessage: (state) => {
+      state.successMessage = null;
     },
 
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
@@ -135,10 +155,13 @@ const authSlice = createSlice({
 
 export const {
   loginStart,
+  clearLoading,
   setCredentials,
   logout,
   setAuthError,
   clearAuthError,
+  setSuccessMessage,
+  clearSuccessMessage,
   updateUser,
 } = authSlice.actions;
 
@@ -149,4 +172,5 @@ export const selectCurrentUser = (state: { auth: AuthState }) => state.auth.user
 export const selectIsAuthenticated = (state: { auth: AuthState }) => state.auth.isAuthenticated;
 export const selectAuthLoading = (state: { auth: AuthState }) => state.auth.isLoading;
 export const selectAuthError = (state: { auth: AuthState }) => state.auth.error;
+export const selectAuthSuccess = (state: { auth: AuthState }) => state.auth.successMessage;
 export const selectAccessToken = (state: { auth: AuthState }) => state.auth.accessToken;

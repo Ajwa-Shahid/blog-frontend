@@ -1,8 +1,12 @@
 import { apiClient } from '../utils/api';
 import { store } from '../redux/store';
+import axios from 'axios';
 import { 
   setCredentials, 
   setAuthError, 
+  setSuccessMessage,
+  clearSuccessMessage,
+  clearLoading,
   loginStart, 
   logout as logoutAction 
 } from '../redux/slices/authSlice';
@@ -11,6 +15,21 @@ export interface RegisterData {
   username: string;
   email: string;
   password: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    role: string;
+    role_id: string;
+    status: 'active' | 'inactive' | 'suspended';
+    created_at: string;
+    updated_at: string;
+  };
 }
 
 export interface LoginData {
@@ -28,37 +47,48 @@ export interface ResetPasswordData {
 }
 
 export interface AuthResponse {
-  user: {
-    id: string;
-    username: string;
-    email: string;
-    role: string;
-    role_id: string;
-    status: 'active' | 'inactive' | 'suspended';
-    created_at: string;
-    updated_at: string;
+  success: boolean;
+  message: string;
+  data: {
+    user: {
+      id: string;
+      username: string;
+      email: string;
+      role: string;
+      role_id: string;
+      status: 'active' | 'inactive' | 'suspended';
+      created_at: string;
+      updated_at: string;
+    };
+    accessToken: string;
+    refreshToken: string;
   };
-  accessToken: string;
-  refreshToken: string;
 }
 
 class AuthService {
-  async register(data: RegisterData): Promise<AuthResponse> {
+  async register(data: RegisterData): Promise<RegisterResponse> {
     try {
       store.dispatch(loginStart());
       
-      const response = await apiClient.post<AuthResponse>('/auth/register', data);
+      // Use axios directly instead of apiClient to avoid the ApiResponse wrapper
+      const response = await axios.post<RegisterResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/register`, 
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      );
       
-      if (!response.data) {
-        throw new Error('No data received from server');
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || 'Registration failed');
       }
       
-      // Dispatch success to Redux store
-      store.dispatch(setCredentials({
-        user: response.data.user,
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
-      }));
+      // Clear loading state and show success message
+      store.dispatch(clearLoading());
+      store.dispatch(setSuccessMessage(response.data.message || 'Account created successfully! Please sign in to continue.'));
       
       return response.data;
     } catch (error: any) {
@@ -72,17 +102,26 @@ class AuthService {
     try {
       store.dispatch(loginStart());
       
-      const response = await apiClient.post<AuthResponse>('/auth/login', data);
+      const response = await axios.post<AuthResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/auth/login`, 
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      );
       
-      if (!response.data) {
-        throw new Error('No data received from server');
+      if (!response.data || !response.data.success) {
+        throw new Error(response.data?.message || 'Login failed');
       }
       
       // Dispatch success to Redux store
       store.dispatch(setCredentials({
-        user: response.data.user,
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
+        user: response.data.data.user,
+        accessToken: response.data.data.accessToken,
+        refreshToken: response.data.data.refreshToken,
       }));
       
       return response.data;

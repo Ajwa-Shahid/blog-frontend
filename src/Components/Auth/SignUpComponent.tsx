@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { authService } from '../../services/authService';
-import { selectAuthLoading, selectAuthError } from '../../redux/slices/authSlice';
+import { selectAuthLoading, selectAuthError, selectAuthSuccess, clearSuccessMessage } from '../../redux/slices/authSlice';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -18,10 +18,25 @@ export default function SignUp() {
   
   const isLoading = useSelector(selectAuthLoading);
   const authError = useSelector(selectAuthError);
+  const successMessage = useSelector(selectAuthSuccess);
   
   const router = useRouter();
+  const dispatch = useDispatch();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
+
+  // Handle success message and redirect
+  useEffect(() => {
+    if (successMessage) {
+      // Show success message for 3 seconds then redirect to sign-in
+      const timer = setTimeout(() => {
+        dispatch(clearSuccessMessage());
+        router.push('/signin');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage, dispatch, router]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -76,8 +91,7 @@ export default function SignUp() {
         password: formData.password,
       });
 
-      // Redirect to dashboard on successful registration
-      router.push('/dashboard');
+      // Success is now handled by useEffect hook
     } catch (err: any) {
       console.error('Registration failed:', err);
       
@@ -108,6 +122,12 @@ export default function SignUp() {
           </div>
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            {successMessage && (
+              <div className="bg-green-50 dark:bg-green-900 text-green-800 dark:text-green-100 p-3 rounded-md text-sm">
+                {successMessage}
+              </div>
+            )}
+            
             {(errors.general || errors.submit || authError) && (
               <div className="bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-100 p-3 rounded-md text-sm">
                 {errors.general || errors.submit || authError}
@@ -182,14 +202,19 @@ export default function SignUp() {
             <div>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !!successMessage}
                 className={`w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md transition-colors disabled:opacity-50 ${
                   isDarkMode 
                     ? 'bg-white text-black hover:bg-gray-200' 
                     : 'bg-black text-white hover:bg-gray-800'
                 }`}
               >
-                {isLoading ? 'Creating Account...' : 'Create Account'}
+                {successMessage 
+                  ? 'Redirecting to sign in...' 
+                  : isLoading 
+                    ? 'Creating Account...' 
+                    : 'Create Account'
+                }
               </button>
             </div>
 
