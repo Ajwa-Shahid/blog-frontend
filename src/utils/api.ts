@@ -45,46 +45,78 @@ export const cookieUtils = {
   }
 };
 
-// Token management
+// Token management using cookies (adjusted for backend requirements)
 export const tokenManager = {
   setTokens: (tokens: AuthTokens) => {
     if (typeof window === 'undefined') return;
     
-    // Store in localStorage for persistence
-    localStorage.setItem('accessToken', tokens.accessToken);
-    localStorage.setItem('refreshToken', tokens.refreshToken);
-    localStorage.setItem('tokenExpiresAt', tokens.expiresAt.toString());
+    // Store access token (expires in 15 minutes as per backend)
+    cookieUtils.set('accessToken', tokens.accessToken, { 
+      days: 0.0104, // 15 minutes in days (15/60/24)
+      secure: true, 
+      sameSite: 'strict' 
+    });
     
-    // Also store in httpOnly-like cookie (for additional security in real app)
-    cookieUtils.set('authSession', 'true', { days: 7, secure: true });
+    // Store refresh token (expires in 7 days as per backend)
+    cookieUtils.set('refreshToken', tokens.refreshToken, { 
+      days: 7, 
+      secure: true, 
+      sameSite: 'strict' 
+    });
+    
+    // Calculate and store token expiration (15 minutes from now)
+    const expiresAt = Date.now() + (15 * 60 * 1000); // 15 minutes in milliseconds
+    cookieUtils.set('tokenExpiresAt', expiresAt.toString(), { 
+      days: 7, 
+      secure: true, 
+      sameSite: 'strict' 
+    });
+    
+    // Set auth session indicator
+    cookieUtils.set('authSession', 'true', { 
+      days: 7, 
+      secure: true, 
+      sameSite: 'strict' 
+    });
   },
 
   getAccessToken: (): string | null => {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('accessToken');
+    return cookieUtils.get('accessToken');
   },
 
   getRefreshToken: (): string | null => {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('refreshToken');
+    return cookieUtils.get('refreshToken');
   },
 
   isTokenExpired: (): boolean => {
     if (typeof window === 'undefined') return true;
     
-    const expiresAt = localStorage.getItem('tokenExpiresAt');
+    const expiresAt = cookieUtils.get('tokenExpiresAt');
     if (!expiresAt) return true;
     
-    return Date.now() > parseInt(expiresAt);
+    // Add 1 minute buffer to refresh before actual expiration
+    return Date.now() > (parseInt(expiresAt) - 60000);
   },
 
   clearTokens: () => {
     if (typeof window === 'undefined') return;
     
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('tokenExpiresAt');
+    cookieUtils.remove('accessToken');
+    cookieUtils.remove('refreshToken');
+    cookieUtils.remove('tokenExpiresAt');
     cookieUtils.remove('authSession');
+  },
+
+  // Check if user is authenticated based on cookies
+  isAuthenticated: (): boolean => {
+    if (typeof window === 'undefined') return false;
+    
+    const authSession = cookieUtils.get('authSession');
+    const accessToken = cookieUtils.get('accessToken');
+    
+    return !!(authSession && accessToken && !tokenManager.isTokenExpired());
   }
 };
 
@@ -177,12 +209,21 @@ class ApiClient {
       const refreshToken = tokenManager.getRefreshToken();
       if (!refreshToken) return false;
 
+      // Match backend RefreshTokenDto structure
       const response = await this.axiosInstance.post('/auth/refresh', {
-        refreshToken
+        refreshToken: refreshToken
       });
 
       if (response.data.success && response.data.data) {
-        tokenManager.setTokens(response.data.data);
+        // Backend only returns new accessToken, keep existing refreshToken
+        const currentRefreshToken = tokenManager.getRefreshToken();
+        const newTokens = {
+          accessToken: response.data.data.accessToken,
+          refreshToken: currentRefreshToken || '',
+          expiresAt: Date.now() + (15 * 60 * 1000) // 15 minutes from now
+        };
+        
+        tokenManager.setTokens(newTokens);
         return true;
       }
     } catch (error) {
