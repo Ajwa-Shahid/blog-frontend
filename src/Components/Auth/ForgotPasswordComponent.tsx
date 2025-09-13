@@ -3,40 +3,36 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
+import { useForgotPasswordMutation } from '../../redux/api/authApi';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
   const { theme } = useTheme();
   const darkMode = theme === 'dark';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setMessage({ type: '', text: '' });
 
     // Validation
     if (!email) {
       setMessage({ type: 'error', text: 'Please enter your email address' });
-      setIsLoading(false);
       return;
     }
 
     if (!email.includes('@')) {
       setMessage({ type: 'error', text: 'Please enter a valid email address' });
-      setIsLoading(false);
       return;
     }
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const result = await forgotPassword({ email }).unwrap();
       
-      // Mock password reset - in real app, this would send an email
       setMessage({ 
         type: 'success', 
-        text: 'Password reset link has been sent to your email address. Please check your inbox.' 
+        text: result.message || 'Password reset link has been sent to your email address. Please check your inbox.'
       });
       
       // Clear email after successful request
@@ -44,10 +40,9 @@ export default function ForgotPassword() {
         setEmail('');
       }, 3000);
       
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
-    } finally {
-      setIsLoading(false);
+    } catch (error: any) {
+      const errorMessage = error?.data?.message || 'Something went wrong. Please try again.';
+      setMessage({ type: 'error', text: errorMessage });
     }
   };
 

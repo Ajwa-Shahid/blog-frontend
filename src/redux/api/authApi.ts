@@ -1,12 +1,13 @@
 import { baseApi } from './baseApi';
 import { User } from '../slices/authSlice';
 
-// Auth request/response interfaces
+// Auth request/response interfaces (Updated to match backend DTOs)
 export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
-  role?: string;
+  role?: 'USER' | 'ADMIN' | 'MODERATOR';
+  role_id?: string;
 }
 
 export interface LoginRequest {
@@ -15,23 +16,45 @@ export interface LoginRequest {
 }
 
 export interface AuthResponse {
-  user: User;
-  accessToken: string;
-  refreshToken: string;
+  success: boolean;
   message: string;
+  data: {
+    user: User;
+    accessToken: string;
+    refreshToken: string;
+  };
 }
 
 export interface RefreshTokenRequest {
   refreshToken: string;
 }
 
+export interface RefreshTokenResponse {
+  success: boolean;
+  message: string;
+  data: {
+    accessToken: string;
+  };
+}
+
 export interface ForgotPasswordRequest {
   email: string;
+}
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+  token: string;
 }
 
 export interface ResetPasswordRequest {
   token: string;
   password: string;
+}
+
+export interface ResetPasswordResponse {
+  success: boolean;
+  message: string;
 }
 
 export interface UpdateProfileRequest {
@@ -74,7 +97,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     // Refresh token
-    refreshToken: builder.mutation<AuthResponse, RefreshTokenRequest>({
+    refreshToken: builder.mutation<RefreshTokenResponse, RefreshTokenRequest>({
       query: (body) => ({
         url: '/auth/refresh',
         method: 'POST',
@@ -83,7 +106,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     // Forgot password
-    forgotPassword: builder.mutation<{ message: string }, ForgotPasswordRequest>({
+    forgotPassword: builder.mutation<ForgotPasswordResponse, ForgotPasswordRequest>({
       query: (body) => ({
         url: '/auth/forgot-password',
         method: 'POST',
@@ -92,7 +115,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     // Reset password
-    resetPassword: builder.mutation<{ message: string }, ResetPasswordRequest>({
+    resetPassword: builder.mutation<ResetPasswordResponse, ResetPasswordRequest>({
       query: (body) => ({
         url: '/auth/reset-password',
         method: 'POST',

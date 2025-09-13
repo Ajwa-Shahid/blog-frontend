@@ -1,11 +1,12 @@
-// Authentication Types
+// Authentication Types (Updated to match backend)
 export interface User {
   id: string;
+  username: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  role_id?: string;
+  role?: 'USER' | 'ADMIN' | 'MODERATOR';
+  status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   avatar?: string;
-  role: 'user' | 'admin';
 }
 
 export interface AuthTokens {
@@ -17,15 +18,23 @@ export interface AuthTokens {
 export interface LoginCredentials {
   email: string;
   password: string;
-  rememberMe?: boolean;
 }
 
 export interface RegisterCredentials {
-  firstName: string;
-  lastName: string;
+  username: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  role?: 'USER' | 'ADMIN' | 'MODERATOR';
+  role_id?: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
 }
 
 export interface AuthResponse {

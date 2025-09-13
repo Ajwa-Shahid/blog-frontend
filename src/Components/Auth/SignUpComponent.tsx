@@ -13,7 +13,6 @@ export default function SignUp() {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [register, { isLoading }] = useRegisterMutation();
@@ -28,8 +27,6 @@ export default function SignUp() {
 
     if (!formData.username.trim()) {
       newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters long';
     }
 
     if (!formData.email.trim()) {
@@ -42,12 +39,6 @@ export default function SignUp() {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters long';
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     setErrors(newErrors);
@@ -86,9 +77,9 @@ export default function SignUp() {
 
       // Store credentials in Redux and cookies
       dispatch(setCredentials({
-        user: result.user,
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
+        user: result.data.user,
+        accessToken: result.data.accessToken,
+        refreshToken: result.data.refreshToken,
       }));
 
       // Redirect to dashboard on successful registration
@@ -197,27 +188,6 @@ export default function SignUp() {
                   placeholder="Create a password"
                 />
                 {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-              </div>
-
-              <div>
-                <label htmlFor="confirmPassword" className={`block text-sm font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                  Confirm Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-md ${
-                    isDarkMode 
-                      ? 'bg-gray-800 border-gray-700 text-white' 
-                      : 'bg-white border-gray-300 text-black'
-                  }`}
-                  placeholder="Confirm your password"
-                />
-                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
               </div>
             </div>
 
