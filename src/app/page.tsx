@@ -16,7 +16,6 @@ export default function Home() {
   if (!mounted) {
     return (
       <div className="min-h-screen transition-colors duration-300 bg-white">
-        {/* Header */}
         <header className="p-6 border-b transition-colors border-gray-200 bg-white">
           <div className="max-w-6xl mx-auto flex justify-between items-center">
             <div className="flex-1"></div>
@@ -37,7 +36,6 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Main Content */}
         <main className="max-w-6xl mx-auto p-6">
           <div className="text-center py-20">
             <h2 className="text-5xl font-bold mb-6 text-black">
@@ -71,7 +69,6 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
-      {/* Header */}
       <header className={`p-6 border-b transition-colors ${isDarkMode ? 'border-gray-800 bg-gray-900' : 'border-gray-200 bg-white'}`}>
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex-1"></div>
@@ -103,7 +100,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-6xl mx-auto p-6">
         <div className="text-center py-20">
           <h2 className={`text-5xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-black'}`}>
