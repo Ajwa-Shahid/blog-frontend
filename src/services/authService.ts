@@ -124,6 +124,9 @@ class AuthService {
         refreshToken: response.data.data.refreshToken,
       }));
       
+      // Set success message
+      store.dispatch(setSuccessMessage(response.data.message || 'Login successful! Welcome back.'));
+      
       return response.data;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Login failed';

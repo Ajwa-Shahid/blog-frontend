@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useSelector } from 'react-redux';
 import { authService } from '../../services/authService';
-import { selectAuthLoading, selectAuthError } from '../../redux/slices/authSlice';
+import { selectAuthLoading, selectAuthError, selectAuthSuccess } from '../../redux/slices/authSlice';
 
 export default function SignInComponent() {
   const [formData, setFormData] = useState({
@@ -18,10 +18,23 @@ export default function SignInComponent() {
   
   const isLoading = useSelector(selectAuthLoading);
   const authError = useSelector(selectAuthError);
+  const successMessage = useSelector(selectAuthSuccess);
   const router = useRouter();
   
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
+
+  // Handle successful login
+  useEffect(() => {
+    if (successMessage) {
+      // Redirect to dashboard after showing success message for 2 seconds
+      const timer = setTimeout(() => {
+        router.push('/dashboard');
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage, router]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -67,8 +80,7 @@ export default function SignInComponent() {
         email: formData.email,
         password: formData.password,
       });
-      
-      router.push('/dashboard');
+      // Success will be handled by useEffect
     } catch (err: any) {
       setErrors({ submit: err.message || 'Login failed. Please check your credentials and try again.' });
     }
@@ -98,6 +110,14 @@ export default function SignInComponent() {
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {successMessage && (
+              <div className={`p-4 rounded-lg border transition-all duration-300 ${
+                isDarkMode ? 'bg-green-900/30 text-green-100 border-green-700' : 'bg-green-50 text-green-800 border-green-200'
+              }`}>
+                <p className="text-sm font-medium">{successMessage as string}</p>
+              </div>
+            )}
+
             {(errors.general || errors.submit || authError) && (
               <div className={`p-4 rounded-lg border transition-all duration-300 ${
                 isDarkMode ? 'bg-red-900/30 text-red-100 border-red-700' : 'bg-red-50 text-red-800 border-red-200'
