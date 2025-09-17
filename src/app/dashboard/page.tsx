@@ -47,7 +47,7 @@ export default function Dashboard() {
           {/* Main Title */}
           <div className="text-center">
             <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
-              Blog System
+              Bijli Coin
             </h1>
           </div>
 
@@ -62,7 +62,7 @@ export default function Dashboard() {
                 Welcome to your Dashboard, {user.username}!
               </h2>
               <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                You have successfully registered and logged in to your blog system.
+                You have successfully registered and logged in to Bijli Coin.
               </p>
             </div>
             
@@ -123,7 +123,7 @@ export default function Dashboard() {
                     : 'text-white bg-black hover:bg-gray-800'
                 }`}
               >
-                Start Blogging
+                Start Creating
               </button>
               <button
                 className={`py-3 px-4 rounded-lg text-sm font-medium border transition-all duration-200 ${

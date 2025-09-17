@@ -77,7 +77,7 @@ export default function Header({ showAuthButtons = true }: HeaderProps) {
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         <div className="flex-1">
           <Link href="/" className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
-            Blog System
+            Bijli Coin
           </Link>
         </div>
         
@@ -100,10 +100,6 @@ export default function Header({ showAuthButtons = true }: HeaderProps) {
             <>
               {isAuthenticated ? (
                 <>
-                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Welcome, {user?.username}
-                  </span>
-                  
                   {/* Admin link - only show for admin users */}
                   {(user?.role === 'super_admin' || user?.role === 'admin') && (
                     <Link 

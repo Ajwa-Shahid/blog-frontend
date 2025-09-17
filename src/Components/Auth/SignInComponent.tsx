@@ -105,7 +105,7 @@ export default function SignInComponent() {
               Sign In
             </h2>
             <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Sign in to your blogging space
+              Sign in to your Bijli Coin account
             </p>
           </div>
 

@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Bijli Coin",
-  description: "A modern blog system built with Next.js and Redux Toolkit",
+  description: "A modern blog system powered by Bijli Coin - built with Next.js and Redux Toolkit",
 };
 
 export default function RootLayout({

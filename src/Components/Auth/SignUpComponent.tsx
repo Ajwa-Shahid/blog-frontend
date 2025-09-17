@@ -117,7 +117,7 @@ export default function SignUp() {
               Create Account
             </h2>
             <p className={`mt-1 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Start your blogging journey
+              Start your journey with Bijli Coin
             </p>
           </div>
 
