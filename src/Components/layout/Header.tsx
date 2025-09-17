@@ -72,20 +72,20 @@ export default function Header({ showAuthButtons = true }: HeaderProps) {
                   </span>
                   <Link 
                     href="/dashboard"
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isDarkMode 
-                        ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                        ? 'text-black bg-white hover:bg-gray-200' 
+                        : 'text-white bg-black hover:bg-gray-800'
                     }`}
                   >
                     Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    className={`py-3 px-4 rounded-lg text-sm font-medium border border-transparent transition-all duration-200 ${
                       isDarkMode 
-                        ? 'bg-gray-700 text-white hover:bg-gray-600' 
-                        : 'bg-gray-200 text-black hover:bg-gray-300'
+                        ? 'text-white bg-gray-800 hover:bg-gray-700' 
+                        : 'text-black bg-gray-200 hover:bg-gray-300'
                     }`}
                   >
                     Logout
@@ -95,17 +95,17 @@ export default function Header({ showAuthButtons = true }: HeaderProps) {
                 <>
                   <Link 
                     href="/signin"
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                    className={`py-3 px-4 border border-transparent text-sm font-medium rounded-lg transition-all duration-200 ${
                       isDarkMode 
-                        ? 'bg-white text-black hover:bg-gray-200' 
-                        : 'bg-black text-white hover:bg-gray-800'
+                        ? 'text-black bg-white hover:bg-gray-200' 
+                        : 'text-white bg-black hover:bg-gray-800'
                     }`}
                   >
                     Sign In
                   </Link>
                   <Link 
                     href="/signup"
-                    className={`px-4 py-2 rounded-lg font-medium border transition-colors ${
+                    className={`py-3 px-4 rounded-lg text-sm font-medium border transition-all duration-200 ${
                       isDarkMode 
                         ? 'border-gray-600 text-white hover:bg-gray-800' 
                         : 'border-gray-300 text-black hover:bg-gray-100'

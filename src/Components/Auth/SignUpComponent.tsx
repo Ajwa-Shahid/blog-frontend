@@ -203,10 +203,10 @@ export default function SignUp() {
               <button
                 type="submit"
                 disabled={isLoading || !!successMessage}
-                className={`w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md transition-colors disabled:opacity-50 ${
+                className={`w-full py-3 px-4 border border-transparent text-sm font-medium rounded-lg transition-all duration-200 disabled:opacity-50 ${
                   isDarkMode 
-                    ? 'bg-white text-black hover:bg-gray-200' 
-                    : 'bg-black text-white hover:bg-gray-800'
+                    ? 'text-black bg-white hover:bg-gray-200' 
+                    : 'text-white bg-black hover:bg-gray-800'
                 }`}
               >
                 {successMessage 

@@ -114,19 +114,19 @@ export default function Dashboard() {
             {/* Action Buttons */}
             <div className="mt-6 flex justify-center space-x-4">
               <button
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                className={`py-3 px-4 border border-transparent text-sm font-medium rounded-lg transition-all duration-200 ${
                   isDarkMode 
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    ? 'text-black bg-white hover:bg-gray-200' 
+                    : 'text-white bg-black hover:bg-gray-800'
                 }`}
               >
                 Start Blogging
               </button>
               <button
-                className={`px-4 py-2 rounded-lg font-medium border transition-all duration-200 ${
+                className={`py-3 px-4 rounded-lg text-sm font-medium border transition-all duration-200 ${
                   isDarkMode 
-                    ? 'border-gray-600 text-gray-300 hover:bg-gray-800' 
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ? 'border-gray-600 text-white hover:bg-gray-800' 
+                    : 'border-gray-300 text-black hover:bg-gray-100'
                 }`}
               >
                 View Posts

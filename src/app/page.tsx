@@ -78,7 +78,7 @@ export default function Home() {
           <div className="flex-1 flex items-center justify-end gap-4">
             <button
               onClick={toggleTheme}
-              className={`p-2 rounded-lg transition-colors ${
+              className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isDarkMode 
                   ? 'bg-gray-800 text-white hover:bg-gray-700' 
                   : 'bg-gray-100 text-black hover:bg-gray-200'
@@ -88,10 +88,10 @@ export default function Home() {
             </button>
             <Link 
               href="/signin"
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`py-3 px-4 border border-transparent text-sm font-medium rounded-lg transition-all duration-200 ${
                 isDarkMode 
-                  ? 'bg-white text-black hover:bg-gray-200' 
-                  : 'bg-black text-white hover:bg-gray-800'
+                  ? 'text-black bg-white hover:bg-gray-200' 
+                  : 'text-white bg-black hover:bg-gray-800'
               }`}
             >
               Sign In
