@@ -7,6 +7,7 @@ import UserStatusBadge from '../../Components/UI/UserStatusBadge';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
@@ -64,6 +65,22 @@ export default function Dashboard() {
               <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 You have successfully registered and logged in to Bijli Coin.
               </p>
+              
+              {/* Admin button - only show for admin users */}
+              {(user?.role === 'super_admin' || user?.role === 'admin') && (
+                <div className="mt-4">
+                  <Link 
+                    href="/admin"
+                    className={`inline-block py-3 px-6 border border-transparent text-sm font-medium rounded-lg transition-all duration-200 ${
+                      isDarkMode 
+                        ? 'text-black bg-white hover:bg-gray-200' 
+                        : 'text-white bg-black hover:bg-gray-800'
+                    }`}
+                  >
+                    Admin Dashboard
+                  </Link>
+                </div>
+              )}
             </div>
             
             {/* Profile Card */}

@@ -100,20 +100,6 @@ export default function Header({ showAuthButtons = true }: HeaderProps) {
             <>
               {isAuthenticated ? (
                 <>
-                  {/* Admin link - only show for admin users */}
-                  {(user?.role === 'super_admin' || user?.role === 'admin') && (
-                    <Link 
-                      href="/admin"
-                      className={`py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        isDarkMode 
-                          ? 'text-yellow-300 bg-yellow-900 hover:bg-yellow-800' 
-                          : 'text-yellow-800 bg-yellow-100 hover:bg-yellow-200'
-                      }`}
-                    >
-                      Admin
-                    </Link>
-                  )}
-                  
                   <Link 
                     href="/dashboard"
                     className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
