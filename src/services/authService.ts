@@ -26,7 +26,7 @@ export interface RegisterResponse {
     email: string;
     role: string;
     role_id: string;
-    status: 'active' | 'inactive' | 'suspended';
+    status: 'active' | 'inactive' | 'banned'; // Fixed to match backend
     created_at: string;
     updated_at: string;
   };
@@ -56,7 +56,7 @@ export interface AuthResponse {
       email: string;
       role: string;
       role_id: string;
-      status: 'active' | 'inactive' | 'suspended';
+      status: 'active' | 'inactive' | 'banned'; // Fixed to match backend
       created_at: string;
       updated_at: string;
     };

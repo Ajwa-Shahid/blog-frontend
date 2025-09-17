@@ -8,7 +8,7 @@ export interface User {
   email: string;
   role: string;
   role_id: string;
-  status: 'active' | 'inactive' | 'suspended';
+  status: 'active' | 'inactive' | 'banned'; // Updated to match backend UserStatus enum
   created_at: string;
   updated_at: string;
 }

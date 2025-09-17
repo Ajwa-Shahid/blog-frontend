@@ -1,6 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 import Header from './Header';
 
 interface LayoutProps {
@@ -15,7 +16,14 @@ export default function Layout({
   showAuthButtons = true 
 }: LayoutProps) {
   const { theme } = useTheme();
-  const isDarkMode = theme === 'dark';
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDarkMode = mounted ? theme === 'dark' : false;
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-black' : 'bg-white'}`}>

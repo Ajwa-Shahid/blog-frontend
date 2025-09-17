@@ -3,8 +3,9 @@
 import { useSelector } from 'react-redux';
 import { selectCurrentUser, selectIsAuthenticated } from '../../redux/slices/authSlice';
 import Layout from '../../Components/layout/Layout';
+import UserStatusBadge from '../../Components/UI/UserStatusBadge';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 
 export default function Dashboard() {
@@ -12,7 +13,14 @@ export default function Dashboard() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const router = useRouter();
   const { theme } = useTheme();
-  const isDarkMode = theme === 'dark';
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDarkMode = mounted ? theme === 'dark' : false;
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -96,17 +104,12 @@ export default function Dashboard() {
                   <span className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Status:
                   </span>
-                  <span className={`capitalize px-2 py-1 rounded-full text-xs font-medium ${
-                    user.status === 'active' 
-                      ? isDarkMode 
-                        ? 'bg-green-900 text-green-200 border border-green-700' 
-                        : 'bg-green-100 text-green-800 border border-green-200'
-                      : isDarkMode 
-                        ? 'bg-yellow-900 text-yellow-200 border border-yellow-700' 
-                        : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
-                  }`}>
-                    {user.status}
-                  </span>
+                  <UserStatusBadge 
+                    status={user.status}
+                    size="sm"
+                    showIcon={true}
+                    showTooltip={true}
+                  />
                 </div>
               </div>
             </div>

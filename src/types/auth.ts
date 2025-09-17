@@ -5,7 +5,7 @@ export interface User {
   email: string;
   role_id?: string;
   role?: 'USER' | 'ADMIN' | 'MODERATOR';
-  status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  status?: 'active' | 'inactive' | 'banned'; // Fixed to match backend enum values
   avatar?: string;
 }
 
