@@ -5,8 +5,11 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import UserStatusBadge from '../UI/UserStatusBadge';
 import UserStatusManager from '../UI/UserStatusManager';
+import RoleBadge from '../UI/RoleBadge';
+import RoleManager from '../UI/RoleManager';
 import { useUserStatusManager } from '../../services/userStatusService';
 import { UserStatus } from '../../types/userStatus';
+import { Role } from '../../types/role';
 
 interface AdminUserManagementProps {
   users: Array<{
@@ -90,6 +93,62 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
     }
   };
 
+  // Custom role change handler with UI updates
+  const handleRoleChange = async (userId: string, newRole: Role): Promise<void> => {
+    if (!authToken) {
+      throw new Error('Authentication required');
+    }
+
+    console.log(`🔄 Starting role update for user ${userId} to ${newRole}`);
+    setIsUpdating(userId);
+    
+    try {
+      // Call the backend API to update role
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/users/${userId}`;
+      console.log(`📡 Making PATCH request to: ${apiUrl}`);
+      console.log(`📦 Request body:`, { role: newRole });
+      console.log(`🔑 Auth token:`, authToken ? `${authToken.substring(0, 20)}...` : 'None');
+
+      const response = await fetch(apiUrl, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ role: newRole }),
+      });
+
+      console.log(`📥 Response status: ${response.status} ${response.statusText}`);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error(`❌ API Error:`, errorData);
+        throw new Error(errorData.message || `Failed to update user role: ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      console.log(`✅ API Response:`, responseData);
+
+      // Update the local state to reflect the change immediately
+      setLocalUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.id === userId 
+            ? { ...user, role: newRole }
+            : user
+        )
+      );
+
+      // Show success message
+      console.log(`✅ Successfully updated user ${userId} role to ${newRole} in database`);
+      
+    } catch (error) {
+      console.error('❌ Failed to update user role:', error);
+      throw error;
+    } finally {
+      setIsUpdating(null);
+    }
+  };
+
   // Check if current user can manage users (has super_admin role or update_user permission)
   const canManageUsers = currentUser?.role === 'super_admin' || currentUser?.role === 'admin';
 
@@ -107,9 +166,9 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">User Status Management</h2>
+        <h2 className="text-2xl font-bold mb-2">User Management</h2>
         <p className="text-gray-600">
-          Manage user account statuses. Only Super Admins can modify user statuses.
+          Manage user account statuses and roles. Only Super Admins can modify user privileges.
         </p>
       </div>
 
@@ -125,10 +184,13 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                 Role
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Role Actions
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                Status Actions
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Joined
@@ -147,9 +209,39 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                    {user.role}
-                  </span>
+                  <RoleBadge 
+                    role={user.role}
+                    size="sm"
+                    showIcon={true}
+                  />
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {user.id !== currentUser?.id && (
+                    <div className="relative">
+                      <RoleManager
+                        currentRole={user.role}
+                        userId={user.id}
+                        onRoleChange={handleRoleChange}
+                        showLabel={false}
+                        compact={true}
+                        disabled={isUpdating === user.id}
+                        key={`role-${user.id}-${user.role}`}
+                      />
+                      {isUpdating === user.id && (
+                        <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
+                          <svg className="w-4 h-4 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {user.id === currentUser?.id && (
+                    <span className="text-sm text-gray-400">
+                      Cannot modify own role
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <UserStatusBadge 
@@ -168,7 +260,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                         showLabel={false}
                         compact={true}
                         disabled={isUpdating === user.id}
-                        key={`${user.id}-${user.status}`}
+                        key={`status-${user.id}-${user.status}`}
                       />
                       {isUpdating === user.id && (
                         <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center">
@@ -196,20 +288,48 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
         </div>
       </div>
 
-      <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-        <h3 className="font-medium text-blue-900 mb-2">Status Information:</h3>
-        <div className="text-sm text-blue-800 space-y-1">
-          <div className="flex items-center gap-2">
-            <UserStatusBadge status={UserStatus.ACTIVE} size="sm" />
-            <span>User can access all features normally</span>
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-4 bg-blue-50 rounded-lg">
+          <h3 className="font-medium text-blue-900 mb-2">Status Information:</h3>
+          <div className="text-sm text-blue-800 space-y-1">
+            <div className="flex items-center gap-2">
+              <UserStatusBadge status={UserStatus.ACTIVE} size="sm" />
+              <span>User can access all features normally</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <UserStatusBadge status={UserStatus.INACTIVE} size="sm" />
+              <span>User account is temporarily disabled</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <UserStatusBadge status={UserStatus.BANNED} size="sm" />
+              <span>User account is permanently banned</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <UserStatusBadge status={UserStatus.INACTIVE} size="sm" />
-            <span>User account is temporarily disabled</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <UserStatusBadge status={UserStatus.BANNED} size="sm" />
-            <span>User account is permanently banned</span>
+        </div>
+        
+        <div className="p-4 bg-purple-50 rounded-lg">
+          <h3 className="font-medium text-purple-900 mb-2">Role Information:</h3>
+          <div className="text-sm text-purple-800 space-y-1">
+            <div className="flex items-center gap-2">
+              <RoleBadge role={Role.SUPER_ADMIN} size="sm" />
+              <span>Full system access and management</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <RoleBadge role={Role.ADMIN} size="sm" />
+              <span>Administrative privileges</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <RoleBadge role={Role.EDITOR} size="sm" />
+              <span>Content creation and editing privileges</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <RoleBadge role={Role.MODERATOR} size="sm" />
+              <span>Content moderation privileges</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <RoleBadge role={Role.USER} size="sm" />
+              <span>Standard user access</span>
+            </div>
           </div>
         </div>
       </div>
