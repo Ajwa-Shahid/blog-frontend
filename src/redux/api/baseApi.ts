@@ -38,8 +38,14 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
     );
 
     if (refreshResult?.data) {
-      // Store the new token
-      api.dispatch(setCredentials(refreshResult.data));
+      // The refresh endpoint only returns a new accessToken
+      // We need to update only the access token, keeping existing user and refresh token
+      const currentState = api.getState() as RootState;
+      api.dispatch(setCredentials({
+        user: currentState.auth.user!,
+        accessToken: (refreshResult.data as any).data.accessToken,
+        refreshToken: currentState.auth.refreshToken!,
+      }));
       // Retry the original query with new token
       result = await baseQuery(args, api, extraOptions);
     } else {
@@ -60,8 +66,4 @@ export const baseApi = createApi({
 });
 
 // Import auth actions
-// import { setCredentials, logout } from '../slices/authSlice';
-
-// Temporary placeholders until authSlice is created
-const setCredentials = (data: any) => ({ type: 'auth/setCredentials', payload: data });
-const logout = () => ({ type: 'auth/logout' });
+import { setCredentials, logout } from '../slices/authSlice';

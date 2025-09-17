@@ -174,3 +174,4 @@ export const selectAuthLoading = (state: { auth: AuthState }) => state.auth.isLo
 export const selectAuthError = (state: { auth: AuthState }) => state.auth.error;
 export const selectAuthSuccess = (state: { auth: AuthState }) => state.auth.successMessage;
 export const selectAccessToken = (state: { auth: AuthState }) => state.auth.accessToken;
+export const selectRefreshToken = (state: { auth: AuthState }) => state.auth.refreshToken;

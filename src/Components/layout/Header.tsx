@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectIsAuthenticated, selectCurrentUser, logout } from '../../redux/slices/authSlice';
+import { selectIsAuthenticated, selectCurrentUser, selectRefreshToken, logout } from '../../redux/slices/authSlice';
 import { useLogoutMutation } from '../../redux/api/authApi';
+import { useToast } from '../UI/ToastProvider';
 
 interface HeaderProps {
   showAuthButtons?: boolean;
@@ -14,17 +15,25 @@ export default function Header({ showAuthButtons = true }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectCurrentUser);
+  const refreshToken = useSelector(selectRefreshToken);
   const [logoutMutation] = useLogoutMutation();
   const dispatch = useDispatch();
+  const { showToast } = useToast();
 
   const isDarkMode = theme === 'dark';
   const toggleTheme = () => setTheme(isDarkMode ? 'light' : 'dark');
 
   const handleLogout = async () => {
     try {
-      await logoutMutation().unwrap();
+      if (refreshToken) {
+        const result = await logoutMutation({ refreshToken }).unwrap();
+        showToast(result.message || 'Logged out successfully', 'success');
+      } else {
+        showToast('Logged out successfully', 'success');
+      }
     } catch (error) {
       console.error('Logout failed:', error);
+      showToast('Logout failed, but you have been signed out locally', 'error');
     } finally {
       dispatch(logout());
     }

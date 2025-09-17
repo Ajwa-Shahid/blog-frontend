@@ -88,10 +88,11 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
     // Logout user
-    logout: builder.mutation<{ message: string }, void>({
-      query: () => ({
+    logout: builder.mutation<{ message: string }, { refreshToken: string }>({
+      query: (body) => ({
         url: '/auth/logout',
         method: 'POST',
+        body,
       }),
       invalidatesTags: ['User'],
     }),
