@@ -5,6 +5,8 @@ import { useTheme } from 'next-themes';
 import { UserStatus, getStatusConfig, isValidUserStatus, normalizeUserStatus } from '../../types/userStatus';
 
 interface UserStatusManagerProps {
+  userIndex?: number;
+  totalUsers?: number;
   currentStatus: UserStatus | string;
   userId: string;
   onStatusChange: (userId: string, newStatus: UserStatus) => Promise<void>;
@@ -21,7 +23,9 @@ const UserStatusManager: React.FC<UserStatusManagerProps> = ({
   disabled = false,
   className = '',
   showLabel = true,
-  compact = false
+  compact = false,
+  userIndex,
+  totalUsers
 }) => {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -39,26 +43,13 @@ const UserStatusManager: React.FC<UserStatusManagerProps> = ({
   // Calculate dropdown position when it opens
   useEffect(() => {
     if (isOpen && buttonRef.current) {
-      const buttonRect = buttonRef.current.getBoundingClientRect();
-      const dropdownHeight = 120; // Approximate height of dropdown with 3 options
-      const viewportHeight = window.innerHeight;
-      const spaceBelow = viewportHeight - buttonRect.bottom;
-      const spaceAbove = buttonRect.top;
-      
-      // More aggressive threshold - show upward if we're in bottom 40% of viewport
-      // This will catch more users near the bottom
-      const bottomThreshold = viewportHeight * 0.6; // 60% from top means 40% from bottom
-      const isInBottomArea = buttonRect.bottom > bottomThreshold;
-      
-      // Show upward if:
-      // 1. Not enough space below (with padding), OR
-      // 2. We're in the bottom 40% of the viewport AND there's any reasonable space above
-      if (spaceBelow < (dropdownHeight + 20) || 
-          (isInBottomArea && spaceAbove > 60)) {
+      // If last two users, show upwards
+      if (typeof userIndex === 'number' && typeof totalUsers === 'number' && userIndex >= totalUsers - 2) {
         setDropdownPosition('top');
-      } else {
-        setDropdownPosition('bottom');
+        return;
       }
+      // Otherwise, always show below
+      setDropdownPosition('bottom');
     }
   }, [isOpen]);
 
