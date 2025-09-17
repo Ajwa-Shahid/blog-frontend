@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { UserStatus, getStatusConfig, isValidUserStatus, normalizeUserStatus } from '../../types/userStatus';
 
@@ -28,11 +28,39 @@ const UserStatusManager: React.FC<UserStatusManagerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>('bottom');
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Calculate dropdown position when it opens
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const dropdownHeight = 120; // Approximate height of dropdown with 3 options
+      const viewportHeight = window.innerHeight;
+      const spaceBelow = viewportHeight - buttonRect.bottom;
+      const spaceAbove = buttonRect.top;
+      
+      // More aggressive threshold - show upward if we're in bottom 40% of viewport
+      // This will catch more users near the bottom
+      const bottomThreshold = viewportHeight * 0.6; // 60% from top means 40% from bottom
+      const isInBottomArea = buttonRect.bottom > bottomThreshold;
+      
+      // Show upward if:
+      // 1. Not enough space below (with padding), OR
+      // 2. We're in the bottom 40% of the viewport AND there's any reasonable space above
+      if (spaceBelow < (dropdownHeight + 20) || 
+          (isInBottomArea && spaceAbove > 60)) {
+        setDropdownPosition('top');
+      } else {
+        setDropdownPosition('bottom');
+      }
+    }
+  }, [isOpen]);
 
   const isDarkMode = mounted ? theme === 'dark' : false;
 
@@ -75,6 +103,7 @@ const UserStatusManager: React.FC<UserStatusManagerProps> = ({
   return (
     <div className={`relative inline-block ${className}`}>
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         disabled={disabled || isLoading}
         className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg border transition-all duration-200 ${
@@ -107,11 +136,13 @@ const UserStatusManager: React.FC<UserStatusManagerProps> = ({
         )}
       </button>
 
-      {/* Simple proper dropdown */}
+      {/* Dropdown with dynamic positioning */}
       {isOpen && !disabled && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className={`absolute top-full left-0 mt-1 w-40 rounded-md border shadow-lg z-50 ${
+          <div className={`absolute left-0 w-40 rounded-md border shadow-lg z-50 max-h-48 overflow-y-auto ${
+            dropdownPosition === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'
+          } ${
             isDarkMode 
               ? 'bg-gray-800 border-gray-600' 
               : 'bg-white border-gray-200'
