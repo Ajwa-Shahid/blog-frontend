@@ -713,7 +713,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
             type="button"
             variant="primary"
             size="sm"
-            className="px-3 py-1 rounded-full bg-black text-white font-semibold hover:bg-gray-900 transition"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-[#181f2a] text-white font-semibold shadow-md hover:bg-gray-900 transition p-0"
             onClick={() => {
               const pageNum = Number(goToPageInput);
               if (pageNum >= 1 && pageNum <= pageCount) {
@@ -721,7 +721,13 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
               }
             }}
             disabled={!goToPageInput || Number(goToPageInput) < 1 || Number(goToPageInput) > pageCount}
-          >Page</Button>
+            aria-label="Go to page"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" className="w-6 h-6">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="16.5" y1="16.5" x2="21" y2="21" />
+            </svg>
+          </Button>
         </div>
       </div>
     </div>
