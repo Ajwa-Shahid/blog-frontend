@@ -502,23 +502,47 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                           Delete
                         </button>
                         {showDeleteConfirm === user.id && (
-                          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-                            <div className="bg-white rounded-lg shadow-lg p-6 min-w-[22rem] max-w-2xl w-full break-words" style={{wordBreak: 'break-word'}}>
-                              <h3 className="text-lg font-bold mb-2 text-red-700">Confirm Deletion</h3>
-                              <p className="mb-4" style={{wordBreak: 'break-word'}}>
-                                Are you sure you want to delete <span className="font-semibold">{user.username}</span>? This action cannot be undone.
-                              </p>
-                              <div className="flex gap-2 justify-end">
-                                <button
-                                  className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-                                  onClick={() => setShowDeleteConfirm(null)}
-                                  disabled={deletingUserId === user.id}
-                                >Cancel</button>
-                                <button
-                                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-semibold"
-                                  onClick={() => handleDeleteUser(user.id)}
-                                  disabled={deletingUserId === user.id}
-                                >{deletingUserId === user.id ? 'Deleting...' : 'Delete'}</button>
+                          <div className="fixed inset-0 z-50 flex items-center justify-center" style={{background: '#FAFAFA'}}>
+                            <div
+                              className="rounded-2xl shadow-2xl flex flex-col justify-center items-center"
+                              style={{
+                                background: '#fff',
+                                width: '420px',
+                                padding: '32px',
+                                boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                                wordBreak: 'break-word',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <div className="flex flex-col items-center w-full">
+                                <div className="mb-2">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="#e11d48" className="w-10 h-10">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 7h12M9 7V5a3 3 0 0 1 6 0v2m-9 0h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7z" />
+                                  </svg>
+                                </div>
+                                <h3 className="text-2xl font-bold text-center text-gray-900 mb-2">Delete User</h3>
+                                <p className="text-base text-gray-600 text-center mb-6">Are you sure you want to delete <span className="font-semibold">{user.username}</span>?</p>
+                                <div className="flex gap-3 w-full justify-center mt-2">
+                                  <Button
+                                    type="button"
+                                    variant="primary"
+                                    size="md"
+                                    className="w-1/2 py-3 font-semibold bg-black hover:bg-gray-900 text-white rounded-lg shadow-none border-none"
+                                    onClick={() => handleDeleteUser(user.id)}
+                                    disabled={deletingUserId === user.id}
+                                  >{deletingUserId === user.id ? 'Deleting...' : 'Delete User'}</Button>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="md"
+                                    className="w-1/2 py-3 font-semibold border-blue-500 text-blue-600 hover:bg-blue-50 rounded-lg shadow-none"
+                                    onClick={() => setShowDeleteConfirm(null)}
+                                    disabled={deletingUserId === user.id}
+                                  >Cancel</Button>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -528,18 +552,32 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {user.id !== currentUser?.id && (
-                      <button
-                        className="flex items-center gap-1 bg-green-100 text-green-700 text-sm px-4 py-1 rounded-full shadow border border-green-200 hover:bg-green-200 transition disabled:opacity-50 min-w-[90px] min-h-[32px] justify-center"
-                        style={{height: '32px'}}
-                        onClick={async () => {
-                          const newRole = editStates[user.id]?.role || user.role;
-                          const newStatus = editStates[user.id]?.status || user.status;
-                          if (newRole !== user.role) await handleRoleChange(user.id, newRole as Role);
-                          if (newStatus !== user.status) await handleStatusChange(user.id, newStatus as UserStatus);
-                        }}
-                      >
-                        Save Changes
-                      </button>
+                        <Button
+                          type="button"
+                          variant="primary"
+                          size="md"
+                          className={`flex items-center gap-1 text-sm px-4 py-1 rounded-full border min-w-[90px] min-h-[32px] justify-center transition-all duration-200
+                            ${
+                              (editStates[user.id]?.role === user.role || !editStates[user.id]?.role) &&
+                              (editStates[user.id]?.status === user.status || !editStates[user.id]?.status)
+                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed shadow-none'
+                                : 'bg-green-500 text-white border-green-600 shadow-lg hover:bg-green-600 hover:scale-[1.04]'
+                            }
+                          `}
+                          style={{height: '32px'}}
+                          disabled={
+                            (editStates[user.id]?.role === user.role || !editStates[user.id]?.role) &&
+                            (editStates[user.id]?.status === user.status || !editStates[user.id]?.status)
+                          }
+                          onClick={async () => {
+                            const newRole = editStates[user.id]?.role || user.role;
+                            const newStatus = editStates[user.id]?.status || user.status;
+                            if (newRole !== user.role) await handleRoleChange(user.id, newRole as Role);
+                            if (newStatus !== user.status) await handleStatusChange(user.id, newStatus as UserStatus);
+                          }}
+                        >
+                          Save Changes
+                        </Button>
                     )}
                   </td>
                 </tr>
