@@ -28,6 +28,11 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -89,7 +94,7 @@ export default function AdminUsersPage() {
     }
   };
 
-  if (!isAuthenticated || !user) {
+  if (!mounted || !isAuthenticated || !user) {
     return (
       <Layout showHeader={true}>
         <div className="min-h-screen flex items-center justify-center">
