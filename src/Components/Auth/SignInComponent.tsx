@@ -22,7 +22,9 @@ export default function SignInComponent() {
   const router = useRouter();
   
   const { theme } = useTheme();
-  const isDarkMode = theme === 'dark';
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const isDarkMode = mounted ? theme === 'dark' : false;
 
   // Handle successful login
   useEffect(() => {
@@ -86,6 +88,7 @@ export default function SignInComponent() {
     }
   };
 
+  if (!mounted) return null;
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-8">
@@ -101,10 +104,10 @@ export default function SignInComponent() {
             : 'bg-white border-gray-200'
         }`}>
           <div className="text-center mb-8">
-            <h2 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}> 
               Sign In
             </h2>
-            <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}> 
               Sign in to your Bijli Coin account
             </p>
           </div>
