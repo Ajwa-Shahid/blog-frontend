@@ -672,7 +672,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
             type="button"
             variant="outline"
             size="sm"
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-black bg-gray-100 hover:bg-gray-200 transition disabled:opacity-40"
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-black bg-[#232c3d] text-white font-bold shadow-md transition disabled:opacity-40"
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
             aria-label="Previous page"
@@ -682,10 +682,11 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
               <Button
                 key={page}
                 type="button"
-                variant={currentPage === page ? 'primary' : 'outline'}
+                variant="outline"
                 size="sm"
-                className={`w-8 h-8 flex items-center justify-center rounded-full border transition font-semibold mx-0.5 ${currentPage === page ? 'bg-black text-white border-black scale-110' : 'bg-white text-black border-gray-300 hover:bg-gray-100'}`}
+                className="w-8 h-8 flex items-center justify-center rounded-full border border-black bg-[#232c3d] text-white font-bold shadow-md mx-0.5 transition disabled:opacity-40"
                 onClick={() => setCurrentPage(page)}
+                disabled={currentPage === page}
               >{page}</Button>
             ) : (
               (page === currentPage - 3 || page === currentPage + 3) && pageCount > 7 ? <span key={page} className="mx-1 text-gray-400">...</span> : null
@@ -695,7 +696,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
             type="button"
             variant="outline"
             size="sm"
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-black bg-gray-100 hover:bg-gray-200 transition disabled:opacity-40"
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-black bg-[#232c3d] text-white font-bold shadow-md transition disabled:opacity-40"
             onClick={() => setCurrentPage(p => Math.min(pageCount, p + 1))}
             disabled={currentPage === pageCount}
             aria-label="Next page"
