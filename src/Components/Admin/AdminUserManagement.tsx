@@ -326,9 +326,9 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
         </div>
       {/* Add User Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f8f9fa]">
+  <div className={`fixed inset-0 z-50 flex items-center justify-center ${isDarkMode ? 'bg-black' : 'bg-[#f8f9fa]'}` }>
           <div
-            className="rounded-2xl shadow-2xl flex flex-col justify-center items-center bg-white"
+            className={`rounded-2xl shadow-2xl flex flex-col justify-center items-center ${isDarkMode ? 'bg-[#10192b] border border-[#10192b]' : 'bg-white'}`}
             style={{
               width: '420px',
               height: '520px',
@@ -347,7 +347,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                 <label className="font-normal text-sm">Username</label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded bg-[#eaf2fb] text-base font-normal placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className={`w-full px-3 py-2 rounded border text-base font-normal focus:outline-none focus:ring-2 focus:ring-blue-200 ${isDarkMode ? 'bg-[#232c3d] border-[#313a4e] text-white placeholder-gray-400' : 'bg-[#eaf2fb] border-gray-300 text-black placeholder-gray-400'}`}
                   value={newUser.username}
                   onChange={e => setNewUser(u => ({...u, username: e.target.value}))}
                   placeholder="admin@example.com"
@@ -357,7 +357,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                 <label className="font-normal text-sm">Email</label>
                 <input
                   type="email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded bg-[#eaf2fb] text-base font-normal placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className={`w-full px-3 py-2 rounded border text-base font-normal focus:outline-none focus:ring-2 focus:ring-blue-200 ${isDarkMode ? 'bg-[#232c3d] border-[#313a4e] text-white placeholder-gray-400' : 'bg-[#eaf2fb] border-gray-300 text-black placeholder-gray-400'}`}
                   value={newUser.email}
                   onChange={e => setNewUser(u => ({...u, email: e.target.value}))}
                   placeholder="Email"
@@ -367,7 +367,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                 <label className="font-normal text-sm">Password</label>
                 <input
                   type="password"
-                  className="w-full px-3 py-2 border border-gray-300 rounded bg-[#eaf2fb] text-base font-normal placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  className={`w-full px-3 py-2 rounded border text-base font-normal focus:outline-none focus:ring-2 focus:ring-blue-200 ${isDarkMode ? 'bg-[#232c3d] border-[#313a4e] text-white placeholder-gray-400' : 'bg-[#eaf2fb] border-gray-300 text-black placeholder-gray-400'}`}
                   value={newUser.password}
                   onChange={e => setNewUser(u => ({...u, password: e.target.value}))}
                   placeholder="Password"
@@ -376,7 +376,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
               <div className="flex flex-col gap-1">
                 <label className="font-normal text-sm">Role</label>
                 <select
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200 text-base font-normal"
+                  className={`w-full px-3 py-1.5 rounded border text-base font-normal focus:outline-none focus:ring-2 focus:ring-blue-200 ${isDarkMode ? 'bg-[#232c3d] border-[#313a4e] text-white' : 'bg-white border-gray-300 text-black'}`}
                   value={newUser.role}
                   onChange={e => setNewUser(u => ({...u, role: e.target.value as Role}))}
                 >
@@ -388,7 +388,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
               <div className="flex flex-col gap-1">
                 <label className="font-normal text-sm">Status</label>
                 <select
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200 text-base font-normal"
+                  className={`w-full px-3 py-1.5 rounded border text-base font-normal focus:outline-none focus:ring-2 focus:ring-blue-200 ${isDarkMode ? 'bg-[#232c3d] border-[#313a4e] text-white' : 'bg-white border-gray-300 text-black'}`}
                   value={newUser.status}
                   onChange={e => setNewUser(u => ({...u, status: e.target.value as UserStatus}))}
                 >
@@ -638,7 +638,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                             ${
                               (editStates[user.id]?.role === user.role || !editStates[user.id]?.role) &&
                               (editStates[user.id]?.status === user.status || !editStates[user.id]?.status)
-                                ? 'bg-[#8B929A] text-white cursor-not-allowed' // Disabled: solid gray bg, white text
+                                ? 'bg-[#8B929A] text-white cursor-not-allowed disabled:text-white disabled:opacity-10' // Disabled: solid gray bg, white text, no fade
                                 : 'bg-green-500 text-white border-green-600 shadow-lg hover:bg-green-600 hover:scale-[1.04]'
                             }
                           `}
