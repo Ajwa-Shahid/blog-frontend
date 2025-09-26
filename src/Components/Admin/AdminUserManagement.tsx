@@ -281,8 +281,8 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
   const paginatedUsers = filteredUsers.slice((currentPage - 1) * USERS_PER_PAGE, currentPage * USERS_PER_PAGE);
 
   return (
-  <div className={`p-6 min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#1b2232]' : 'bg-gray-50'}`}> 
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+  <div className={`p-6 min-h-screen flex flex-col transition-colors duration-300 ${isDarkMode ? 'bg-[#181c23]' : 'bg-[#f8f9fa]'}`}> 
+    <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-2xl font-bold mb-2">User Management</h2>
           <p className="text-gray-600">
@@ -293,21 +293,21 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
           <div className="relative flex items-center" style={{minWidth: 240}}>
             <input
               type="text"
-              className={`pl-5 pr-12 py-3 rounded-full shadow-lg border-none focus:outline-none w-full transition-colors duration-200 ${isDarkMode ? 'bg-[#232c3d] text-white placeholder-white' : 'bg-white text-base font-normal placeholder-gray-400'}`}
+              className={`pl-5 pr-12 py-3 rounded-full border-none focus:outline-none w-full transition-colors duration-200 shadow-lg ${isDarkMode ? 'bg-[#232c3d] text-white placeholder-white' : 'bg-white text-base font-normal placeholder-gray-300'}`}
               placeholder="Search..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              style={{boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}
+              style={!isDarkMode ? { boxShadow: '0 8px 24px #d1d1d1' } : { boxShadow: '0 2px 8px rgba(0,0,0,0.10)' }}
             />
             <button
               type="button"
-              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full w-9 h-9 flex items-center justify-center shadow transition-colors duration-200 ${isDarkMode ? 'bg-[#232c3d] text-white' : 'bg-gray-900'}`}
-              style={{boxShadow: '0 2px 8px rgba(0,0,0,0.15)'}}
+              className={`absolute right-0 top-1/2 -translate-y-1/2 rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-colors duration-200 ${isDarkMode ? 'bg-[#232c3d] text-white' : 'bg-gray-900'}`}
+              style={!isDarkMode ? { boxShadow: '0 4px 16px 0 #d1d1d1' } : { boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
               tabIndex={-1}
               aria-label="Search"
               disabled
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-5 h-5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" className="w-6 h-6">
                 <circle cx="11" cy="11" r="7" />
                 <line x1="16.5" y1="16.5" x2="21" y2="21" />
               </svg>
@@ -326,15 +326,14 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
         </div>
       {/* Add User Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#FAFAFA]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f8f9fa]">
           <div
-            className="rounded-2xl shadow-2xl flex flex-col justify-center items-center"
+            className="rounded-2xl shadow-2xl flex flex-col justify-center items-center bg-white"
             style={{
-              background: '#fff',
               width: '420px',
               height: '520px',
               padding: '32px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.10)',
               wordBreak: 'break-word',
               display: 'flex',
               justifyContent: 'center',
@@ -348,7 +347,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                 <label className="font-normal text-sm">Username</label>
                 <input
                   type="text"
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200 bg-blue-50 text-base font-normal"
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-[#eaf2fb] text-base font-normal placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-200"
                   value={newUser.username}
                   onChange={e => setNewUser(u => ({...u, username: e.target.value}))}
                   placeholder="admin@example.com"
@@ -358,7 +357,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                 <label className="font-normal text-sm">Email</label>
                 <input
                   type="email"
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200 text-base font-normal"
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-[#eaf2fb] text-base font-normal placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-200"
                   value={newUser.email}
                   onChange={e => setNewUser(u => ({...u, email: e.target.value}))}
                   placeholder="Email"
@@ -368,7 +367,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                 <label className="font-normal text-sm">Password</label>
                 <input
                   type="password"
-                  className="w-full px-3 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-200 bg-blue-50 text-base font-normal"
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-[#eaf2fb] text-base font-normal placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-200"
                   value={newUser.password}
                   onChange={e => setNewUser(u => ({...u, password: e.target.value}))}
                   placeholder="Password"
@@ -449,7 +448,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
       )}
       </div>
 
-      <div className={`rounded-lg shadow overflow-hidden ${isDarkMode ? 'bg-[#232c3d] border border-[#313a4e]' : 'bg-white'}`}> 
+  <div className={`rounded-lg shadow-xl overflow-hidden border transition-colors duration-300 ${isDarkMode ? 'bg-[#23272f] border-[#23272f]' : 'bg-white border-[#e5e7eb]'}`}> 
         <div className="overflow-x-auto"> 
           <table className={`min-w-full divide-y rounded-lg shadow-xl border ${isDarkMode ? 'bg-[#232c3d] border-[#313a4e] text-white' : 'bg-white border-gray-200 text-black'}`}> 
             <thead className={isDarkMode ? 'bg-[#232c3d]' : 'bg-gray-50'}>
