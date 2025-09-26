@@ -37,6 +37,38 @@ interface AdminUserManagementProps {
  * Only accessible to users with 'update_user' permission (Super Admin by default)
  */
 const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
+  // Ref for dropdown popovers
+  const statusDropdownRefs = React.useRef<{[userId: string]: HTMLDivElement | null}>({});
+  const roleDropdownRefs = React.useRef<{[userId: string]: HTMLDivElement | null}>({});
+
+  // Close dropdowns when clicking outside
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      let changed = false;
+      setEditStates(prev => {
+        const updated = { ...prev };
+        Object.keys(prev).forEach(userId => {
+          if (prev[userId].editingStatus && statusDropdownRefs.current[userId]) {
+            if (!statusDropdownRefs.current[userId]?.contains(event.target as Node)) {
+              updated[userId] = { ...updated[userId], editingStatus: false };
+              changed = true;
+            }
+          }
+          if (prev[userId].editingRole && roleDropdownRefs.current[userId]) {
+            if (!roleDropdownRefs.current[userId]?.contains(event.target as Node)) {
+              updated[userId] = { ...updated[userId], editingRole: false };
+              changed = true;
+            }
+          }
+        });
+        return changed ? updated : prev;
+      });
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   // State for Add User modal
   const [showAddModal, setShowAddModal] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -411,6 +443,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                         </span>
                         {editStates[user.id]?.editingRole && (
                           <div
+                            ref={el => { roleDropdownRefs.current[user.id] = el; }}
                             className="bg-white border border-blue-300 rounded-lg shadow p-2 flex flex-col gap-2 absolute z-10"
                             style={{minWidth: 120, top: '100%', left: 0}}
                           >
@@ -457,6 +490,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                         </span>
                         {editStates[user.id]?.editingStatus && (
                           <div
+                            ref={el => { statusDropdownRefs.current[user.id] = el; }}
                             className="bg-white border border-purple-300 rounded-lg shadow p-2 flex flex-col gap-2 absolute z-10"
                             style={{minWidth: 120, top: '100%', left: 0}}
                           >
