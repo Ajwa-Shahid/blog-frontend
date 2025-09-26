@@ -1,4 +1,3 @@
-
 "use client";
 // Types for editStates
 type EditState = {
@@ -262,6 +261,21 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
     );
   }
 
+  // Pagination logic
+  const USERS_PER_PAGE = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [goToPageInput, setGoToPageInput] = useState('');
+  const filteredUsers = localUsers.filter(user => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return true;
+    return (
+      user.username.toLowerCase().includes(term) ||
+      user.email.toLowerCase().includes(term)
+    );
+  });
+  const pageCount = Math.ceil(filteredUsers.length / USERS_PER_PAGE);
+  const paginatedUsers = filteredUsers.slice((currentPage - 1) * USERS_PER_PAGE, currentPage * USERS_PER_PAGE);
+
   return (
   <div className={`p-6 min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}> 
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -296,8 +310,8 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
             </button>
           </div>
           <button
-            className="flex items-center gap-1 bg-blue-600 text-white text-sm px-4 py-1 rounded-full shadow hover:bg-blue-700 transition disabled:opacity-50 min-w-[80px] min-h-[28px] justify-center"
-            style={{height: '28px'}}
+            className="flex items-center gap-1 bg-blue-600 text-white text-sm px-4 py-2 rounded-full shadow hover:bg-blue-700 transition disabled:opacity-50 min-w-[80px] min-h-[44px] justify-center"
+            style={{ height: '44px' }}
             onClick={() => setShowAddModal(true)}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-5 h-5">
@@ -445,16 +459,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {localUsers
-                .filter(user => {
-                  const term = searchTerm.trim().toLowerCase();
-                  if (!term) return true;
-                  return (
-                    user.username.toLowerCase().includes(term) ||
-                    user.email.toLowerCase().includes(term)
-                  );
-                })
-                .map((user, idx) => (
+              {paginatedUsers.map((user, idx) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
@@ -654,6 +659,66 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+      {/* Pagination controls */}
+      <div className="flex justify-center items-center py-6">
+        <div className="flex items-center bg-white rounded-full shadow px-6 py-3 gap-2" style={{ minWidth: 420 }}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-black bg-gray-100 hover:bg-gray-200 transition disabled:opacity-40"
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            aria-label="Previous page"
+          >&#60;</Button>
+          {Array.from({ length: pageCount }, (_, i) => i + 1).map(page => (
+            (page === 1 || page === pageCount || Math.abs(page - currentPage) <= 2) ? (
+              <Button
+                key={page}
+                type="button"
+                variant={currentPage === page ? 'primary' : 'outline'}
+                size="sm"
+                className={`w-8 h-8 flex items-center justify-center rounded-full border transition font-semibold mx-0.5 ${currentPage === page ? 'bg-black text-white border-black scale-110' : 'bg-white text-black border-gray-300 hover:bg-gray-100'}`}
+                onClick={() => setCurrentPage(page)}
+              >{page}</Button>
+            ) : (
+              (page === currentPage - 3 || page === currentPage + 3) && pageCount > 7 ? <span key={page} className="mx-1 text-gray-400">...</span> : null
+            )
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-black bg-gray-100 hover:bg-gray-200 transition disabled:opacity-40"
+            onClick={() => setCurrentPage(p => Math.min(pageCount, p + 1))}
+            disabled={currentPage === pageCount}
+            aria-label="Next page"
+          >&#62;</Button>
+          <span className="ml-4 text-black font-medium">Go to</span>
+          <input
+            type="number"
+            min={1}
+            max={pageCount}
+            value={goToPageInput}
+            onChange={e => setGoToPageInput(e.target.value.replace(/[^0-9]/g, ''))}
+            className="w-16 px-2 py-1 rounded bg-gray-100 border border-gray-300 text-black text-center focus:outline-none focus:ring-2 focus:ring-black font-semibold mx-2"
+            placeholder="Page"
+          />
+          <Button
+            type="button"
+            variant="primary"
+            size="sm"
+            className="px-3 py-1 rounded-full bg-black text-white font-semibold hover:bg-gray-900 transition"
+            onClick={() => {
+              const pageNum = Number(goToPageInput);
+              if (pageNum >= 1 && pageNum <= pageCount) {
+                setCurrentPage(pageNum);
+              }
+            }}
+            disabled={!goToPageInput || Number(goToPageInput) < 1 || Number(goToPageInput) > pageCount}
+          >Page</Button>
         </div>
       </div>
     </div>
