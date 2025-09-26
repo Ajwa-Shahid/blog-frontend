@@ -635,7 +635,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                             ${
                               (editStates[user.id]?.role === user.role || !editStates[user.id]?.role) &&
                               (editStates[user.id]?.status === user.status || !editStates[user.id]?.status)
-                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed shadow-none'
+                                ? 'bg-[#8B929A] text-white cursor-not-allowed' // Disabled: solid gray bg, white text
                                 : 'bg-green-500 text-white border-green-600 shadow-lg hover:bg-green-600 hover:scale-[1.04]'
                             }
                           `}
@@ -704,7 +704,6 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
             value={goToPageInput}
             onChange={e => setGoToPageInput(e.target.value.replace(/[^0-9]/g, ''))}
             className="w-16 px-2 py-1 rounded bg-gray-100 border border-gray-300 text-black text-center focus:outline-none focus:ring-2 focus:ring-black font-semibold mx-2"
-            placeholder="Page"
           />
           <Button
             type="button"
