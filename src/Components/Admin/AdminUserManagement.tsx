@@ -37,6 +37,8 @@ interface AdminUserManagementProps {
  * Only accessible to users with 'update_user' permission (Super Admin by default)
  */
 const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
+  // Search state
+  const [searchTerm, setSearchTerm] = useState('');
   // Ref for dropdown popovers
   const statusDropdownRefs = React.useRef<{[userId: string]: HTMLDivElement | null}>({});
   const roleDropdownRefs = React.useRef<{[userId: string]: HTMLDivElement | null}>({});
@@ -262,23 +264,48 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
 
   return (
   <div className={`p-6 min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}> 
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-2xl font-bold mb-2">User Management</h2>
           <p className="text-gray-600">
             Manage user account statuses and roles. Only Super Admins can modify user privileges.
           </p>
         </div>
-        <button
-          className="flex items-center gap-1 bg-blue-600 text-white text-sm px-4 py-1 rounded-full shadow hover:bg-blue-700 transition disabled:opacity-50 min-w-[80px] min-h-[28px] justify-center"
-          style={{height: '28px'}}
-          onClick={() => setShowAddModal(true)}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-          Add
-        </button>
+        <div className="flex flex-col md:flex-row gap-2 items-center">
+          <div className="relative flex items-center" style={{minWidth: 240}}>
+            <input
+              type="text"
+              className="pl-5 pr-12 py-3 rounded-full shadow-lg bg-white text-base font-normal border-none focus:outline-none w-full"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              style={{boxShadow: '0 2px 8px rgba(0,0,0,0.10)'}}
+            />
+            <button
+              type="button"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-900 rounded-full w-9 h-9 flex items-center justify-center shadow"
+              style={{boxShadow: '0 2px 8px rgba(0,0,0,0.15)'}}
+              tabIndex={-1}
+              aria-label="Search"
+              disabled
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" className="w-5 h-5">
+                <circle cx="11" cy="11" r="7" stroke="white" strokeWidth="2" />
+                <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="white" strokeWidth="2" />
+              </svg>
+            </button>
+          </div>
+          <button
+            className="flex items-center gap-1 bg-blue-600 text-white text-sm px-4 py-1 rounded-full shadow hover:bg-blue-700 transition disabled:opacity-50 min-w-[80px] min-h-[28px] justify-center"
+            style={{height: '28px'}}
+            onClick={() => setShowAddModal(true)}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Add
+          </button>
+        </div>
       {/* Add User Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#FAFAFA]">
@@ -418,7 +445,16 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {localUsers.map((user, idx) => (
+              {localUsers
+                .filter(user => {
+                  const term = searchTerm.trim().toLowerCase();
+                  if (!term) return true;
+                  return (
+                    user.username.toLowerCase().includes(term) ||
+                    user.email.toLowerCase().includes(term)
+                  );
+                })
+                .map((user, idx) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
