@@ -293,7 +293,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
           <div className="relative flex items-center" style={{minWidth: 240}}>
             <input
               type="text"
-              className="pl-5 pr-12 py-3 rounded-full shadow-lg bg-white text-base font-normal border-none focus:outline-none w-full"
+              className={`pl-5 pr-12 py-3 rounded-full shadow-lg border-none focus:outline-none w-full transition-colors duration-200 ${isDarkMode ? 'bg-[#232c3d] text-white placeholder-white' : 'bg-white text-base font-normal placeholder-gray-400'}`}
               placeholder="Search..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
@@ -301,15 +301,15 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
             />
             <button
               type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-900 rounded-full w-9 h-9 flex items-center justify-center shadow"
+              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full w-9 h-9 flex items-center justify-center shadow transition-colors duration-200 ${isDarkMode ? 'bg-[#232c3d] text-white' : 'bg-gray-900'}`}
               style={{boxShadow: '0 2px 8px rgba(0,0,0,0.15)'}}
               tabIndex={-1}
               aria-label="Search"
               disabled
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="white" className="w-5 h-5">
-                <circle cx="11" cy="11" r="7" stroke="white" strokeWidth="2" />
-                <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="white" strokeWidth="2" />
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-5 h-5">
+                <circle cx="11" cy="11" r="7" />
+                <line x1="16.5" y1="16.5" x2="21" y2="21" />
               </svg>
             </button>
           </div>
