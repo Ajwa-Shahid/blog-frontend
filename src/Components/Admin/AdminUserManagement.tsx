@@ -9,16 +9,18 @@ type EditState = {
 // State for tracking which user's role/status is being edited
 // ...existing code...
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import UserStatusBadge from '../UI/UserStatusBadge';
 import UserStatusManager from '../UI/UserStatusManager';
 import RoleBadge from '../UI/RoleBadge';
 import RoleManager from '../UI/RoleManager';
 import Button from '../UI/Button';
+
 import { useUserStatusManager } from '../../services/userStatusService';
 import { UserStatus } from '../../types/userStatus';
 import { Role } from '../../types/role';
+import { useTheme } from 'next-themes';
 
 interface AdminUserManagementProps {
   users: Array<{
@@ -80,8 +82,10 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
     status: UserStatus.ACTIVE,
   });
   const [addingUser, setAddingUser] = useState(false);
-  const { theme } = require('next-themes');
-  const isDarkMode = theme?.resolvedTheme === 'dark';
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const isDarkMode = mounted ? theme === 'dark' : false;
   const currentUser = useSelector((state: any) => state.auth.user);
   const authToken = useSelector((state: any) => state.auth.accessToken);
   const [localUsers, setLocalUsers] = useState(users);
@@ -277,7 +281,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
   const paginatedUsers = filteredUsers.slice((currentPage - 1) * USERS_PER_PAGE, currentPage * USERS_PER_PAGE);
 
   return (
-  <div className={`p-6 min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}> 
+  <div className={`p-6 min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#1b2232]' : 'bg-gray-50'}`}> 
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-2xl font-bold mb-2">User Management</h2>
@@ -445,11 +449,11 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
       )}
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className={`overflow-x-auto ${isDarkMode ? 'bg-gray-900' : ''}`}> 
-          <table className={`min-w-full divide-y rounded-lg shadow-xl border ${isDarkMode ? 'bg-gray-900 border-gray-700 text-white' : 'bg-white border-gray-200 text-black'}`}> 
-            <thead className="bg-gray-50">
-              <tr className={isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}>
+      <div className={`rounded-lg shadow overflow-hidden ${isDarkMode ? 'bg-[#232c3d] border border-[#313a4e]' : 'bg-white'}`}> 
+        <div className="overflow-x-auto"> 
+          <table className={`min-w-full divide-y rounded-lg shadow-xl border ${isDarkMode ? 'bg-[#232c3d] border-[#313a4e] text-white' : 'bg-white border-gray-200 text-black'}`}> 
+            <thead className={isDarkMode ? 'bg-[#232c3d]' : 'bg-gray-50'}>
+              <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -458,9 +462,9 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ users }) => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edit</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className={isDarkMode ? 'bg-[#232c3d] divide-gray-700' : 'bg-white divide-gray-200'}>
               {paginatedUsers.map((user, idx) => (
-                <tr key={user.id} className="hover:bg-gray-50">
+                <tr key={user.id} className={isDarkMode ? 'hover:bg-[#2a3441]' : 'hover:bg-gray-50'}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{user.username}</div>
